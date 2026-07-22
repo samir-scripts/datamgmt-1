@@ -1,18 +1,71 @@
-<%@ page import ="java.sql.*" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="com.train.util.DatabaseConnection" %>
 <%
-String userid = request.getParameter("username");
-String pwd = request.getParameter("password");
-Class.forName("com.mysql.jdbc.Driver");
-Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/datamgmt_db","root", "password");
-Statement st = con.createStatement();
-ResultSet rs;
-rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
-if (rs.next()) {
-    session.setAttribute("user", userid); // the username will be stored in the session
-    out.println("welcome " + userid);
-    out.println("<a href='logout.jsp'>Log out</a>");
-    response.sendRedirect("success.jsp");
-} else {
-    out.println("Invalid password <a href='login.jsp'>try again</a>");
-}
+    String user = request.getParameter("username");
+    String pass = request.getParameter("password");
+
+    if(user == null || pass == null || user.trim().isEmpty() || pass.trim().isEmpty()) {
+        response.sendRedirect("login.jsp?error=Please enter username and password.");
+        return;
+    }
+
+    Connection con = null;
+    PreparedStatement pstEmp = null;
+    PreparedStatement pstCus = null;
+    ResultSet rsEmp = null;
+    ResultSet rsCus = null;
+
+    try {
+        con = DatabaseConnection.getConnection();
+
+        // Check EMPLOYEE table first
+        String queryEmp = "SELECT ssn, role FROM EMPLOYEE WHERE username = ? AND password = ?";
+        pstEmp = con.prepareStatement(queryEmp);
+        pstEmp.setString(1, user);
+        pstEmp.setString(2, pass);
+        rsEmp = pstEmp.executeQuery();
+
+        if (rsEmp.next()) {
+            session.setAttribute("user", user);
+            session.setAttribute("role", rsEmp.getString("role"));
+            session.setAttribute("userId", rsEmp.getString("ssn"));
+
+            if ("admin".equalsIgnoreCase(rsEmp.getString("role"))) {
+                response.sendRedirect("admin/admin_dashboard.jsp");
+            } else if ("customer_rep".equalsIgnoreCase(rsEmp.getString("role"))) {
+                response.sendRedirect("rep/rep_dashboard.jsp");
+            }
+            return;
+        }
+
+        // Check CUSTOMER table
+        String queryCus = "SELECT cid, first_name, last_name FROM CUSTOMER WHERE username = ? AND password = ?";
+        pstCus = con.prepareStatement(queryCus);
+        pstCus.setString(1, user);
+        pstCus.setString(2, pass);
+        rsCus = pstCus.executeQuery();
+
+        if (rsCus.next()) {
+            session.setAttribute("user", user);
+            session.setAttribute("role", "customer");
+            session.setAttribute("userId", rsCus.getInt("cid"));
+            session.setAttribute("fullName", rsCus.getString("first_name") + " " + rsCus.getString("last_name"));
+
+            response.sendRedirect("customer/customer_dashboard.jsp");
+            return;
+        }
+
+        // If no match found; can you guys look into this
+        response.sendRedirect("login.jsp?error=Invalid username or password.");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendRedirect("login.jsp?error=Database error occurred.");
+    } finally {
+        if(rsEmp != null) rsEmp.close();
+        if(rsCus != null) rsCus.close();
+        if(pstEmp != null) pstEmp.close();
+        if(pstCus != null) pstCus.close();
+        if(con != null) con.close();
+    }
 %>

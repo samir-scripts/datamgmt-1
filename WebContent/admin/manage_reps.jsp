@@ -37,6 +37,41 @@
             if(pst != null) pst.close();
             if(con != null) con.close();
         }
+    } else if ("edit".equals(action)) {
+        String ssn = request.getParameter("ssn");
+        String fName = request.getParameter("first_name");
+        String lName = request.getParameter("last_name");
+        String pass = request.getParameter("password");
+        
+        Connection con = null;
+        PreparedStatement pst = null;
+        try {
+            con = DatabaseConnection.getConnection();
+            if (pass != null && !pass.trim().isEmpty()) {
+                String query = "UPDATE EMPLOYEE SET first_name=?, last_name=?, password=? WHERE ssn=? AND role='customer_rep'";
+                pst = con.prepareStatement(query);
+                pst.setString(1, fName);
+                pst.setString(2, lName);
+                pst.setString(3, pass);
+                pst.setString(4, ssn);
+            } else {
+                String query = "UPDATE EMPLOYEE SET first_name=?, last_name=? WHERE ssn=? AND role='customer_rep'";
+                pst = con.prepareStatement(query);
+                pst.setString(1, fName);
+                pst.setString(2, lName);
+                pst.setString(3, ssn);
+            }
+            pst.executeUpdate();
+            response.sendRedirect("manage_reps.jsp?success=Rep updated.");
+            return;
+        } catch(Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manage_reps.jsp?error=Failed to update rep.");
+            return;
+        } finally {
+            if(pst != null) pst.close();
+            if(con != null) con.close();
+        }
     } else if ("delete".equals(action)) {
         String ssn = request.getParameter("ssn");
         Connection con = null;
@@ -63,7 +98,6 @@
 <html>
 <head>
     <title>Manage Representatives</title>
-    
 </head>
 <body>
     <div class="container">
@@ -74,12 +108,14 @@
         <%
             String successMsg = request.getParameter("success");
             String errorMsg = request.getParameter("error");
-            if (successMsg != null) out.println("<div class='success'>" + successMsg + "</div>");
-            if (errorMsg != null) out.println("<div class='error'>" + errorMsg + "</div>");
+            if (successMsg != null) out.println("<div><font color='green'>" + successMsg + "</font></div><br>");
+            if (errorMsg != null) out.println("<div><font color='red'>" + errorMsg + "</font></div><br>");
+            
+            String editSsn = request.getParameter("edit_ssn");
         %>
         
-        <table>
-            <tr><th>SSN</th><th>Name</th><th>Username</th><th>Action</th></tr>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr><th>SSN</th><th>First Name</th><th>Last Name</th><th>Username</th><th>Action</th></tr>
             <%
                 Connection con = null;
                 Statement st = null;
@@ -89,12 +125,26 @@
                     st = con.createStatement();
                     rs = st.executeQuery("SELECT ssn, first_name, last_name, username FROM EMPLOYEE WHERE role = 'customer_rep'");
                     while(rs.next()) {
-                        out.println("<tr>");
-                        out.println("<td>" + rs.getString("ssn") + "</td>");
-                        out.println("<td>" + rs.getString("first_name") + " " + rs.getString("last_name") + "</td>");
-                        out.println("<td>" + rs.getString("username") + "</td>");
-                        out.println("<td><a href='manage_reps.jsp?action=delete&ssn=" + rs.getString("ssn") + "' onclick=\"return confirm('Are you sure?');\">Delete</a></td>");
-                        out.println("</tr>");
+                        String s = rs.getString("ssn");
+                        if (editSsn != null && editSsn.equals(s)) {
+                            out.println("<tr><form action='manage_reps.jsp' method='POST'>");
+                            out.println("<input type='hidden' name='action' value='edit'>");
+                            out.println("<input type='hidden' name='ssn' value='" + s + "'>");
+                            out.println("<td>" + s + "</td>");
+                            out.println("<td><input type='text' name='first_name' value='" + rs.getString("first_name") + "' required></td>");
+                            out.println("<td><input type='text' name='last_name' value='" + rs.getString("last_name") + "' required></td>");
+                            out.println("<td>" + rs.getString("username") + "<br><small><input type='password' name='password' placeholder='New pass (optional)'></small></td>");
+                            out.println("<td><input type='submit' value='Save'> | <a href='manage_reps.jsp'>Cancel</a></td>");
+                            out.println("</form></tr>");
+                        } else {
+                            out.println("<tr>");
+                            out.println("<td>" + s + "</td>");
+                            out.println("<td>" + rs.getString("first_name") + "</td>");
+                            out.println("<td>" + rs.getString("last_name") + "</td>");
+                            out.println("<td>" + rs.getString("username") + "</td>");
+                            out.println("<td><a href='manage_reps.jsp?edit_ssn=" + s + "'>Edit</a> | <a href='manage_reps.jsp?action=delete&ssn=" + s + "' onclick=\"return confirm('Are you sure?');\">Delete</a></td>");
+                            out.println("</tr>");
+                        }
                     }
                 } catch(Exception e) { e.printStackTrace(); } finally {
                     if (rs != null) rs.close();
@@ -107,12 +157,14 @@
         <h3>Add New Representative</h3>
         <form action="manage_reps.jsp" method="POST">
             <input type="hidden" name="action" value="add">
-            <input type="text" name="ssn" placeholder="SSN (9 digits)" required maxlength="9">
-            <input type="text" name="first_name" placeholder="First Name" required>
-            <input type="text" name="last_name" placeholder="Last Name" required>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="submit" value="Add Representative">
+            <table border="0">
+                <tr><td>SSN:</td><td><input type="text" name="ssn" placeholder="9 digits" required maxlength="9"></td></tr>
+                <tr><td>First Name:</td><td><input type="text" name="first_name" required></td></tr>
+                <tr><td>Last Name:</td><td><input type="text" name="last_name" required></td></tr>
+                <tr><td>Username:</td><td><input type="text" name="username" required></td></tr>
+                <tr><td>Password:</td><td><input type="password" name="password" required></td></tr>
+                <tr><td colspan="2"><input type="submit" value="Add Representative"></td></tr>
+            </table>
         </form>
     </div>
 </body>

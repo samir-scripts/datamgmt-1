@@ -11,13 +11,7 @@
 <html>
 <head>
     <title>Top Customer</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { background-color: #fff; max-width: 600px; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
-        .nav-links { margin-bottom: 20px; }
-        .nav-links a { margin-right: 15px; text-decoration: none; color: #007bff; }
-        .highlight { font-size: 24px; color: #28a745; font-weight: bold; margin-top: 20px; }
-    </style>
+    
 </head>
 <body>
     <div class="container">

@@ -21,18 +21,7 @@
 <html>
 <head>
     <title>Make Reservation</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { background-color: #fff; max-width: 600px; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; }
-        input[type="submit"] { background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px; }
-        input[type="submit"]:hover { background-color: #218838; }
-        .nav-links { margin-bottom: 20px; }
-        .nav-links a { margin-right: 15px; text-decoration: none; color: #007bff; }
-        .details { background-color: #e9ecef; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
-    </style>
+    
 </head>
 <body>
     <div class="container">

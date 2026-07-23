@@ -33,17 +33,7 @@
 <html>
 <head>
     <title>Manage Train Schedules</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { background-color: #fff; max-width: 800px; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
-        .nav-links { margin-bottom: 20px; }
-        .nav-links a { margin-right: 15px; text-decoration: none; color: #007bff; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-        th { background-color: #f8f9fa; }
-        .success { color: green; margin-bottom: 10px; }
-        .error { color: red; margin-bottom: 10px; }
-    </style>
+    
 </head>
 <body>
     <div class="container">

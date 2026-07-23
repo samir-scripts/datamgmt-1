@@ -38,18 +38,7 @@
 <html>
 <head>
     <title>Customer Service</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { background-color: #fff; max-width: 800px; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
-        .nav-links { margin-bottom: 20px; }
-        .nav-links a { margin-right: 15px; text-decoration: none; color: #007bff; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; }
-        input[type="submit"] { background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px; margin-top: 10px;}
-        .success { color: green; margin-bottom: 10px; }
-        .error { color: red; margin-bottom: 10px; }
-        .qna { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-        .answer { margin-top: 10px; padding-left: 20px; border-left: 3px solid #28a745; }
-    </style>
+    
 </head>
 <body>
     <div class="container">
